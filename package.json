@@ -1,0 +1,22 @@
+{
+  "name": "onee-sama",
+  "version": "0.2.3",
+  "description": "Unofficial oppai-ng library for NodeJS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "keywords": [
+    "oppai-ng",
+    "osu",
+    "pp",
+    "calculator",
+    "nodejs",
+    "library",
+    "javascript",
+    "oneesama",
+    "onee-sama"
+  ],
+  "author": "EmptyException",
+  "license": "MIT"
+}
