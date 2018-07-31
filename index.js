@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const execAsync = promisify(require('child_process').exec);
 class Oneesama {
     /**
-     * @param {string} [dir='./data'] oppai folder path, leave it null if you have the oppai folder in your PATH.
+     * @param {string} [dir='./oppai'] oppai folder path, leave it null if you have the oppai folder in your PATH.
      */
 	constructor(dir = './oppai') {
 		if(dir) {
@@ -42,6 +42,7 @@ class Oneesama {
      */
 	async get(id, accs = [100]) {
 		try {
+			console.log(this.dir);
 			const child = await execAsync(`curl https://osu.ppy.sh/osu/${id} | ${this.dir} - -ojson`);
 			const totalPPList = [];
 			const promises = [];
