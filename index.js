@@ -41,7 +41,6 @@ class Oneesama {
      */
 	async get(id, accs = [100]) {
 		try {
-			console.log(this.dir);
 			const child = await execAsync(`curl https://osu.ppy.sh/osu/${id} | ${this.dir} - -ojson`);
 			const totalPPList = [];
 			const promises = [];
