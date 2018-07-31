@@ -1,4 +1,3 @@
-const { join } = require('path');
 const { promisify } = require('util');
 const execAsync = promisify(require('child_process').exec);
 class Oneesama {
@@ -7,7 +6,7 @@ class Oneesama {
      */
 	constructor(dir = './oppai') {
 		if(dir) {
-			this.dir = join(process.cwd(), dir);
+			this.dir = dir;
 		} else {
 			this.dir = 'oppai';
 		}
