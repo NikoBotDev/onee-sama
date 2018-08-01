@@ -41,11 +41,12 @@ class Oneesama {
      */
 	async get(id, accs = [100]) {
 		try {
-			const child = await execAsync(`curl https://osu.ppy.sh/osu/${id} | ${this.dir} - -ojson`);
+			const child = await execAsync(`curl https://osu.ppy.sh/osu/${id} | ${this.dir} - -ojson`, { windowsHide: true });
 			const totalPPList = [];
 			const promises = [];
 			for(const acc of accs) {
-				promises.push(execAsync(`curl https://osu.ppy.sh/osu/${id} | ${this.dir} - ${acc}% -ojson`));
+				promises.push(execAsync(`curl https://osu.ppy.sh/osu/${id} | ${this.dir} - ${acc}% -ojson`,
+				{ windowsHide: true }));
 			}
 			const allData = await Promise.all(promises);
 			for(const proc of allData) {
