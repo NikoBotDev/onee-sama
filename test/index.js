@@ -1,7 +1,7 @@
 const Oneesama = require('../index');
 const parser = new Oneesama();
 parser.get('1639629', [95, 97, 100]).then(data => {
-    // Win only due to oppai being a .exe
+    // You will also need to download the C++ version from here https://github.com/Francesco149/oppai-ng
     /*
     { version: 'For Victory',
       title: 'Upon My Honor',
