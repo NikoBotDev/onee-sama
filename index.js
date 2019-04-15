@@ -17,25 +17,34 @@ class Oneesama {
 		};
 		if (shell) this.execOptions.shell = shell;
 	}
-
+	/**
+	 *
+	 * @typedef {Object} ParserOptions
+	 * @property {string} beatmapId osu beatmap id
+	 * @property {?Array<number>} [accs=[100]] accuracy values
+	 * @property {?boolean} [deleteFile=false] Whether or not to delete the beatmap file after calculation process
+	 * @property {?string} mods Mods to be used in calculations
+	 * @property {?number} misses Amount of misses to use in calculations
+	 */
 	/**
 	 * Get oppai data from CLI
-	 * @param {string} id beatmap id
-	 * @param {?Array<number>} [accs=[100]] accuracy values
-	 * @param {?boolean} [deleteFile=false] Whether or not to delete the beatmap file after calculation process
+	 * @param {ParserOptions} options
 	 * @return {Promise<OppaiData>}
 	 */
-	async get(id, accs = [100], deleteFile = false) {
-		const data = await request(`https://osu.ppy.sh/osu/${id}`);
+	async get({ beatmapId, accs = [100], deleteFile = false, mods, misses }) {
+		const data = await request(`https://osu.ppy.sh/osu/${beatmapId}`);
 		try {
 			fs.mkdirSync(this.tempFolder);
 		} catch (e) {
 			// ignored
 		}
-		const filePath = join(this.tempFolder, `${id}.osu`).replace(/\\/g, '/');
+		const filePath = join(this.tempFolder, `${beatmapId}.osu`).replace(
+			/\\/g,
+			'/'
+		);
 		fs.writeFileSync(filePath, data);
 		const child = await execAsync(
-			`cat ${filePath} | ${this.oppaiDir} - -ojson`,
+			`cat ${filePath} | ${this.oppaiDir} - ${mods ? `+${mods}` : ''} -ojson`,
 			this.execOptions
 		);
 		const totalPPList = [];
@@ -43,7 +52,9 @@ class Oneesama {
 		for (const acc of accs) {
 			promises.push(
 				execAsync(
-					`cat ${filePath} | ${this.oppaiDir} - ${acc}% -ojson`,
+					`cat ${filePath} | ${this.oppaiDir} - ${
+						mods ? `+${mods}` : ''
+					} ${acc}% ${misses ? `${misses}m` : ''} -ojson`,
 					this.execOptions
 				)
 			);
