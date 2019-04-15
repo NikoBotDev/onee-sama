@@ -31,7 +31,14 @@ class Oneesama {
 	 * @param {ParserOptions} options
 	 * @return {Promise<OppaiData>}
 	 */
-	async get({ beatmapId, accs = [100], deleteFile = false, mods, misses }) {
+	async get({
+		beatmapId,
+		accs = [100],
+		deleteFile = false,
+		mods,
+		misses,
+		forceTaiko
+	}) {
 		const data = await request(`https://osu.ppy.sh/osu/${beatmapId}`);
 		try {
 			fs.mkdirSync(this.tempFolder);
@@ -44,7 +51,9 @@ class Oneesama {
 		);
 		fs.writeFileSync(filePath, data);
 		const child = await execAsync(
-			`cat ${filePath} | ${this.oppaiDir} - ${mods ? `+${mods}` : ''} -ojson`,
+			`cat ${filePath} | ${this.oppaiDir} - ${mods ? `+${mods}` : ''} -ojson ${
+				forceTaiko ? '-taiko' : ''
+			}`,
 			this.execOptions
 		);
 		const totalPPList = [];
@@ -54,7 +63,9 @@ class Oneesama {
 				execAsync(
 					`cat ${filePath} | ${this.oppaiDir} - ${
 						mods ? `+${mods}` : ''
-					} ${acc}% ${misses ? `${misses}m` : ''} -ojson`,
+					} ${acc}% ${misses ? `${misses}m` : ''} -ojson ${
+						forceTaiko ? '-taiko' : ''
+					}`,
 					this.execOptions
 				)
 			);
@@ -76,6 +87,7 @@ class Oneesama {
 			numCircles: b.num_circles,
 			numSliders: b.num_sliders,
 			numSpinners: b.num_spinners,
+			modsStr: b.mods_str,
 			aimPp: b.aim_pp,
 			speedPp: b.speed_pp,
 			accPp: b.acc_pp,
