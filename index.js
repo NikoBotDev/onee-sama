@@ -22,9 +22,10 @@ class Oneesama {
 	 * Get oppai data from CLI
 	 * @param {string} id beatmap id
 	 * @param {?Array<number>} [accs=[100]] accuracy values
+	 * @param {?boolean} [deleteFile=false] Whether or not to delete the beatmap file after calculation process
 	 * @return {Promise<OppaiData>}
 	 */
-	async get(id, accs = [100]) {
+	async get(id, accs = [100], deleteFile = false) {
 		const data = await request(`https://osu.ppy.sh/osu/${id}`);
 		try {
 			fs.mkdirSync(this.tempFolder);
@@ -74,7 +75,7 @@ class Oneesama {
 			ar: b.ar,
 			hp: b.hp
 		};
-		fs.unlinkSync(filePath);
+		if (deleteFile) fs.unlinkSync(filePath);
 		return oppaiJson;
 	}
 }
