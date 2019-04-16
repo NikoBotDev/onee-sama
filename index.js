@@ -25,6 +25,7 @@ class Oneesama {
 	 * @property {?boolean} [deleteFile=false] Whether or not to delete the beatmap file after calculation process
 	 * @property {?string} mods Mods to be used in calculations
 	 * @property {?number} misses Amount of misses to use in calculations
+	 * @property {?boolean} forceTaiko Whether or not to force taiko mode for converted maps
 	 */
 	/**
 	 * Get oppai data from CLI
