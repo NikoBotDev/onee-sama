@@ -38,19 +38,24 @@ class Oneesama {
 		deleteFile = false,
 		mods,
 		misses,
-		forceTaiko
+		forceTaiko,
+		downloadFile = false
 	}) {
-		const data = await request(`https://osu.ppy.sh/osu/${beatmapId}`);
-		try {
-			fs.mkdirSync(this.tempFolder);
-		} catch (e) {
-			// ignored
-		}
 		const filePath = join(this.tempFolder, `${beatmapId}.osu`).replace(
 			/\\/g,
 			'/'
 		);
-		fs.writeFileSync(filePath, data);
+		if (downloadFile) {
+			const data = await request(`https://osu.ppy.sh/osu/${beatmapId}`);
+			try {
+				fs.mkdirSync(this.tempFolder);
+			} catch (e) {
+				// ignored
+			}
+
+			fs.writeFileSync(filePath, data);
+		}
+
 		const child = await execAsync(
 			`cat ${filePath} | ${this.oppaiDir} - ${mods ? `+${mods}` : ''} -ojson ${
 				forceTaiko ? '-taiko' : ''
@@ -58,24 +63,27 @@ class Oneesama {
 			this.execOptions
 		);
 		const totalPPList = [];
-		const promises = [];
-		for (const acc of accs) {
-			promises.push(
-				execAsync(
-					`cat ${filePath} | ${this.oppaiDir} - ${
-						mods ? `+${mods}` : ''
-					} ${acc}% ${misses ? `${misses}m` : ''} -ojson ${
-						forceTaiko ? '-taiko' : ''
-					}`,
-					this.execOptions
-				)
-			);
+		if (accs.length !== 0) {
+			const promises = [];
+			for (const acc of accs) {
+				promises.push(
+					execAsync(
+						`cat ${filePath} | ${this.oppaiDir} - ${
+							mods ? `+${mods}` : ''
+						} ${acc}% ${misses ? `${misses}m` : ''} -ojson ${
+							forceTaiko ? '-taiko' : ''
+						}`,
+						this.execOptions
+					)
+				);
+			}
+			const allData = await Promise.all(promises);
+			for (const proc of allData) {
+				const result = JSON.parse(proc.stdout);
+				totalPPList.push(result.pp);
+			}
 		}
-		const allData = await Promise.all(promises);
-		for (const proc of allData) {
-			const result = JSON.parse(proc.stdout);
-			totalPPList.push(result.pp);
-		}
+
 		const b = JSON.parse(child.stdout);
 		const oppaiJson = {
 			version: b.version,
