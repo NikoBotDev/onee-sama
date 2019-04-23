@@ -39,7 +39,7 @@ class Oneesama {
 		mods,
 		misses,
 		forceTaiko,
-		downloadFile = false
+		downloadFile = true
 	}) {
 		const filePath = join(this.tempFolder, `${beatmapId}.osu`).replace(
 			/\\/g,
